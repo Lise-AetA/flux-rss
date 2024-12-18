@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Articles RSS</title>
+  <link rel="stylesheet" href="/styles.css">
+
+</head>
+<body>
+  <header>
+    <h1>Articles - <%= category %></h1>
+    <nav>
+        <ul>
+            <li><a href="/">Tous les articles</a></li>
+            <li><a href="/articles/Moontech">Moontech</a></li>
+            <li><a href="/articles/Arthaud & Associés">Arthaud & Associés</a></li>
+            <li><a href="/articles/Clients">Clients</a></li>
+        </ul>
+    </nav>
+  </header>
+
+  <div id="filters">
+    <label for="sort-order">Trier par date :</label>
+    <select id="sort-order" onchange="applyFilters()">
+      <option value="desc">Décroissant</option>
+      <option value="asc">Croissant</option>
+    </select>
+
+    <label for="time-range">Période :</label>
+    <select id="time-range" onchange="applyFilters()">
+      <option value="all">Toutes les périodes</option>
+      <option value="7">La semaine</option>
+      <option value="14">Les 2 dernières semaines</option>
+      <option value="30">Le mois</option>
+      <option value="90">Les 3 derniers mois</option>
+  </select>
+  </div>
+
+  <div id="articles-list">
+    <% if (articles.length === 0) { %>
+      <p>Aucun article trouvé dans cette catégorie.</p>
+    <% } else { %>
+      <% articles.forEach(article => { %>
+        <div class="article" id="article-<%= article.id %>">
+          <svg class="delete-icon" onclick="deleteArticle(<%= article.id %>)" viewBox="0 0 24 24">
+              <path d="M6 6L18 18" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/>
+              <path d="M6 18L18 6" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <h2><%= article.title %></h2>
+          <p>
+            <%= article.summary.length > 200 ? article.summary.substring(0, 200) + '...' : article.summary %>
+          </p>
+          <p class="article-date"><strong>Date :</strong> <%= new Date(article.pub_date).toLocaleString() %></p>
+          <a href="<%= article.link %>" class='link' target="_blank">Lire l'article</a>
+          <button class="uncategorize-btn" onclick="uncategorizeArticle(<%= article.id %>)">
+            Remettre en Non Catégorisé
+          </button>
+        </div>
+      <% }); %>
+    <% } %>
+  </div>
+
+
+  <script>
+    let articles = <%- JSON.stringify(articles) %>;
+
+    function applyFilters() {
+      const sortOrder = document.getElementById('sort-order').value;
+      const timeRange = document.getElementById('time-range').value;
+
+      const now = new Date();
+      const filteredArticles = articles.filter(article => {
+        if (timeRange !== 'all') {
+          const days = parseInt(timeRange, 10);
+          const articleDate = new Date(article.pub_date);
+          const cutoffDate = new Date(now);
+          cutoffDate.setDate(cutoffDate.getDate() - days);
+          return articleDate >= cutoffDate;
+        }
+        return true;
+      });
+
+      const sortedArticles = filteredArticles.sort((a, b) => {
+        const dateA = new Date(a.pub_date);
+        const dateB = new Date(b.pub_date);
+        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+      });
+
+      displayArticles(sortedArticles);
+    }
+
+    function displayArticles(filteredArticles) {
+      const rssArticlesList = document.getElementById('articles-list');
+      rssArticlesList.innerHTML = ''; // Supprime tout le contenu existant
+
+      filteredArticles.forEach(article => {
+        const articleElement = document.createElement('div');
+        articleElement.classList.add('article');
+        articleElement.id = `article-${article.id}`;
+
+        const truncatedSummary = article.summary.length > 200 
+          ? article.summary.substring(0, 200) + '...' 
+          : article.summary;
+
+        articleElement.innerHTML = `
+          <svg class="delete-icon" onclick="deleteArticle(${article.id})" viewBox="0 0 24 24">
+            <path d="M6 6L18 18" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 18L18 6" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <h2>${article.title}</h2>
+          <p>${truncatedSummary}</p> 
+          <p class="article-date"><strong>Date :</strong> ${new Date(article.pub_date).toLocaleString()}</p>
+          <a href="${article.link}" class='link' target="_blank">Lire l'article</a>
+          <button class="uncategorize-btn" onclick="uncategorizeArticle(${article.id})">
+            Remettre en Non Catégorisé
+          </button>
+        `;
+
+        rssArticlesList.appendChild(articleElement);
+      });
+    }
+
+    async function deleteArticle(articleId) {
+      try {
+        const response = await fetch(`/articles/delete/${articleId}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          alert('Article supprimé avec succès!');
+          // Supprimer l'article de l'interface utilisateur
+          document.getElementById(`article-${articleId}`).remove();
+        } else {
+          const errorData = await response.json();
+          alert(errorData.message || 'Erreur lors de la suppression');
+        }
+      } catch (error) {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de la suppression.');
+      }
+    }
+
+
+
+    function uncategorizeArticle(articleId) {
+      fetch(`/api/updateCategory/${articleId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: articleId, category: 'Uncategorized' })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert('Article remis en Non Catégorisé');
+        location.reload();
+      })
+      .catch(error => {
+        console.error('Erreur lors du changement de catégorie:', error);
+        alert('Une erreur est survenue.');
+      });
+    }
+
+    applyFilters();
+  </script>
+</body>
+</html>

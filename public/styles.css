@@ -1,0 +1,228 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #F5F7FA;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+header {
+    background-color: #2E3A59;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin: 0;
+    color: white
+}
+
+nav {
+    background-color: #2E3A59;
+    padding: 10px 0;
+    text-align: center;
+    border-bottom: 2px solid #E1E8ED;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: #cad6e5;
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #4A90E2;
+}
+
+#articles-list {
+    width: 90%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    position: relative;
+}
+
+.article {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #E1E8ED;
+    padding: 15px;
+    position: relative;
+}
+
+.article:hover {
+    transform: translateY(-5px);
+}
+
+.article img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #E1E8ED;
+}
+
+.article h2 {
+    font-size: 20px;
+    color: #2E3A59;
+    padding: 15px;
+    margin: 0;
+    text-align: center;
+}
+
+.article p {
+    padding: 0 15px;
+    font-size: 1em;
+    color: #A1A8B1;
+    flex-grow: 1;
+    text-align: justify;
+}
+
+.article a {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #4A90E2;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1em;
+    margin: 15px;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.article a:hover {
+    background-color: #2672c8;
+}
+
+.category-container {
+    padding: 15px;
+    background-color: #F5F7FA;
+    text-align: center;
+    border-top: 1px solid #BDC3C7;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.category-select {
+    font-size: 1.2em;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid #BDC3C7;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    appearance: none;
+    outline: none;
+}
+
+.category-select:focus {
+    border-color: #4A90E2;
+    background-color: #ECF0F1;
+}
+
+.category-container button {
+    padding: 10px 20px;
+    font-size: 1.1em;
+    background-color: #2E3A59;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.category-container button:hover {
+    background-color: #FF6F61;
+}
+
+.article-date {
+    font-size: 0.9em;
+    color: #A1A8B1;
+    margin-bottom: 0;
+}
+
+#filters {
+    margin: 20px;
+    padding: 10px;
+    background-color: #E1E8ED;
+    border: 1px solid #BDC3C7;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#sort-order, #time-range {
+    padding: 8px 12px;
+    border: 1px solid #BDC3C7;
+    border-radius: 8px;
+    background-color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+#sort-order:hover, #time-range:hover {
+    border-color: #4A90E2;
+}
+
+.delete-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 25px; /* Taille de la croix */
+    height: 25px; /* Taille de la croix */
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out; /* Transition pour l'agrandissement */
+    color: #A1A8B1; /* Couleur neutre par défaut */
+}
+
+.delete-icon:hover {
+    transform: scale(1.5); /* Agrandit la croix à 1.5 fois sa taille originale */
+    color: #FF6F61; /* Changement de couleur pour un effet plus professionnel */
+}
+
+
+.uncategorize-btn {
+    padding: 5px 10px;
+    font-size: 15px;
+    background-color: #E1E8ED;
+    color: #2E3A59;
+    border: 1px solid #BDC3C7;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.uncategorize-btn:hover {
+    background-color: #BDC3C7;
+    border-color: #4A90E2;
+}
