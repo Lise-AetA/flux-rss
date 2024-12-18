@@ -92,7 +92,7 @@
 
     function displayArticles(filteredArticles) {
       const rssArticlesList = document.getElementById('articles-list');
-      rssArticlesList.innerHTML = ''; // Supprime tout le contenu existant
+      rssArticlesList.innerHTML = ''; 
 
       filteredArticles.forEach(article => {
         const articleElement = document.createElement('div');
@@ -129,7 +129,7 @@
 
         if (response.ok) {
           alert('Article supprimé avec succès!');
-          // Supprimer l'article de l'interface utilisateur
+        
           document.getElementById(`article-${articleId}`).remove();
         } else {
           const errorData = await response.json();

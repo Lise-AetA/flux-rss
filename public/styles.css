@@ -198,16 +198,16 @@ nav ul li a:hover {
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 25px; /* Taille de la croix */
-    height: 25px; /* Taille de la croix */
+    width: 25px; 
+    height: 25px; 
     cursor: pointer;
-    transition: transform 0.3s ease-in-out; /* Transition pour l'agrandissement */
-    color: #A1A8B1; /* Couleur neutre par défaut */
+    transition: transform 0.3s ease-in-out; 
+    color: #A1A8B1; 
 }
 
 .delete-icon:hover {
-    transform: scale(1.5); /* Agrandit la croix à 1.5 fois sa taille originale */
-    color: #FF6F61; /* Changement de couleur pour un effet plus professionnel */
+    transform: scale(1.5); 
+    color: #FF6F61; 
 }
 
 

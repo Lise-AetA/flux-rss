@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="styles.css">
     <style>
         .article-date {
-            font-size: 0.9em; /* Réduire la taille de la police de la date */
-            color: #666; /* Utiliser une couleur grise pour la date */
+            font-size: 0.9em; 
+            color: #666;
         }
     </style>
 </head>
@@ -43,11 +43,11 @@
         </select>
     </div>
     <div id="articles-list">
-        <!-- Les articles seront injectés ici via JavaScript -->
+        
     </div>
 
     <script>
-        let articles = []; // Variable pour stocker tous les articles
+        let articles = [];
 
         async function loadArticles() {
             try {
@@ -61,8 +61,8 @@
                 const data = await response.json();
                 console.log('Articles récupérés :', data);
 
-                articles = data; // Assign the articles data correctly
-                displayArticles(articles); // Affiche les articles initialement
+                articles = data; 
+                displayArticles(articles); 
             } catch (err) {
                 console.error('Erreur lors du chargement des articles:', err);
                 alert('Une erreur est survenue lors du chargement des articles. Vérifiez la console pour plus de détails.');
@@ -71,14 +71,14 @@
 
         function displayArticles(sortedArticles) {
             const rssArticlesList = document.getElementById('articles-list');
-            rssArticlesList.innerHTML = ''; // Supprime tout le contenu existant
+            rssArticlesList.innerHTML = ''; 
 
             sortedArticles.forEach(article => {
                 if (
                     article.link.includes("info.gouv.fr") || 
                     article.link.includes("cyber.gouv.fr")
                 ) {
-                    article.summary = ""; // Supprime la description pour ces sources
+                    article.summary = ""; //
                 }
 
                 const articleElement = document.createElement('div');
@@ -137,7 +137,7 @@
 
 
         function truncateText(text, maxLength) {
-            text = text.replace(/<img[^>]*>/g, ''); // Supprime les images
+            text = text.replace(/<img[^>]*>/g, ''); 
             if (text.length > maxLength) {
                 return text.substring(0, maxLength) + '...';
             }

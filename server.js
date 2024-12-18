@@ -13,7 +13,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configuration de la base de données PostgreSQL
+
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
@@ -43,18 +43,18 @@ app.get('/articles/:category', async (req, res) => {
   const category = req.params.category;
   
   try {
-    // Récupérer les articles depuis la base de données en filtrant par catégorie
+
     const result = await db.query('SELECT * FROM articles WHERE category = $1', [category]);
     const articles = result.rows;
 
-    // Si aucun article trouvé, renvoyer une réponse avec un message
+
     if (articles.length === 0) {
       return res.send('Aucun article trouvé pour cette catégorie');
     }
 
     res.render('articles', {
       category: category,
-      articles: articles,  // Passer les articles récupérés à la vue
+      articles: articles,  
     });
 
   } catch (err) {
@@ -63,11 +63,11 @@ app.get('/articles/:category', async (req, res) => {
   }
 });
 
-// Middleware
+
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -75,8 +75,7 @@ app.post('/api/rating', (req, res) => {
   const { id, category } = req.body;
   console.log(`Article ID: ${id}, Category: ${category}`);
 
-  // Logique pour mettre à jour l'article (par exemple, dans une base de données)
-  // ...
+ 
 
   res.status(200).send('Catégorie mise à jour');
 });
@@ -85,7 +84,7 @@ app.listen(PORT, () => {
   console.log(`Serveur démarré sur http://localhost:${PORT}`);
 });
 
-// URLs des flux RSS
+
 const urls = [
   "https://www.zdnet.fr/feed",
   "https://siecledigital.fr/cybersecurite/feed/",
@@ -99,7 +98,7 @@ const urls = [
   "https://www.cert.ssi.gouv.fr/feed/",
 ];
 
-// Fonction pour analyser le RSS avec xml2js
+
 async function parseRss(body) {
   try {
     const parser = new xml2js.Parser();
@@ -111,7 +110,7 @@ async function parseRss(body) {
   }
 }
 
-// Route pour rendre la page d'articles
+
 app.get('/', async (req, res) => {
     try {
         const result = await db.query('SELECT * FROM articles ORDER BY pub_date DESC'); // Tri par date
@@ -130,7 +129,7 @@ app.delete('/articles/delete/:id', async (req, res) => {
   const articleId = req.params.id;
 
   try {
-    // Suppression de l'article dans la base de données
+   
     const result = await db.query('DELETE FROM articles WHERE id = $1', [articleId]);
 
     if (result.rowCount > 0) {
@@ -162,19 +161,17 @@ async function filterRssByCybersecurity(url, parsed) {
 
   return items.map(item => {
       const description = item.description ? item.description[0] : '';
-      const pubdate = item.pubDate ? new Date(item.pubDate[0]) : null; // Récupération et formatage de la date
+      const pubdate = item.pubDate ? new Date(item.pubDate[0]) : null; 
 
-      // Supprimer les descriptions pour les sources ciblées
       if (url.includes("info.gouv.fr") || url.includes("cyber.gouv.fr")) {
           return {
               title: item.title[0],
               link: item.link[0],
-              description: '', // Efface la description
+              description: '', 
               pubdate: pubdate, 
           };
       }
 
-      // Filtrage classique pour les autres sources
       const title = item.title[0].toLowerCase();
       const lowerDescription = description.toLowerCase();
 
@@ -187,8 +184,8 @@ async function filterRssByCybersecurity(url, parsed) {
           };
       }
 
-      return null; // Ignorer les articles non pertinents
-  }).filter(Boolean); // Supprimer les éléments null
+      return null; 
+  }).filter(Boolean); 
 }
 
 
@@ -198,12 +195,11 @@ async function insertArticleToDb({ title, link, description, pubdate }) {
       const existingArticle = await db.query(existingArticleQuery, [link]);
 
       if (existingArticle.rows.length > 0) {
-          return; // Ignorer l'insertion du doublon
+          return; 
       }
 
-      // Insérer l'article dans la base de données avec la date
       const insertQuery = 'INSERT INTO articles(title, link, summary, pub_date) VALUES($1, $2, $3, $4)';
-      await db.query(insertQuery, [title, link, description, pubdate]); // Utilisez `pubdate` pour la date
+      await db.query(insertQuery, [title, link, description, pubdate]); 
 
   } catch (err) {
       console.error('Erreur lors de l\'insertion de l\'article dans la base de données:', err);
@@ -211,10 +207,9 @@ async function insertArticleToDb({ title, link, description, pubdate }) {
 }
 
 
-// Fonction pour récupérer les flux RSS et les traiter
 urls.forEach(url => fetchAndInsertRss(url));
 
-// Fonction pour récupérer et insérer les articles depuis un flux RSS
+
 async function fetchAndInsertRss(url) {
   if (!url) {
     console.error("L'URL du flux RSS est manquante.");
@@ -239,7 +234,7 @@ async function fetchAndInsertRss(url) {
     if (parsed && parsed.rss && parsed.rss.channel && parsed.rss.channel[0].item && parsed.rss.channel[0].item.length > 0) {
       
 
-      // Filtrage des articles et insertion dans la DB
+      
       const articles = await filterRssByCybersecurity(url, parsed);
       articles.forEach(article => insertArticleToDb(article));
     } else {
@@ -251,11 +246,10 @@ async function fetchAndInsertRss(url) {
 }
 app.get('/api/articles/all', async (req, res) => {
   try {
-    // Récupérer les articles depuis la base de données
     const result = await db.query('SELECT * FROM articles');
     const articles = result.rows;
 
-    // Retourner les articles sous forme de JSON
+  
     res.json(articles);
   } catch (err) {
     console.error('Erreur lors de la récupération des articles:', err);
@@ -264,14 +258,14 @@ app.get('/api/articles/all', async (req, res) => {
 });
 app.post('/api/updateCategory/:id', async (req, res) => {
   const articleId = req.params.id;
-  const { category } = req.body; // Catégorie envoyée depuis le frontend
+  const { category } = req.body; 
 
   try {
-      // Mise à jour de la catégorie dans la base de données
+     
       const query = 'UPDATE articles SET category = $1 WHERE id = $2';
       await db.query(query, [category, articleId]);
 
-      // Répondre avec succès
+      
       res.json({ message: 'Catégorie mise à jour avec succès' });
   } catch (err) {
       console.error('Erreur lors de la mise à jour de la catégorie:', err);
